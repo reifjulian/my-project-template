@@ -1,0 +1,49 @@
+{
+  "env": {
+    "CLAUDE_CODE_USE_POWERSHELL_TOOL": "1",
+    "GIT_TERMINAL_PROMPT": "0"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(pip install:*)",
+      "Bash(pip show:*)",
+      "Bash(grep:*)",
+      "Bash(cat:*)",
+      "Bash(git fetch:*)",
+      "Bash(git checkout:*)",
+      "Bash(git switch:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(git check-ignore:*)",
+
+      "Bash(powershell.exe*StataMP-64*)",
+      "Bash(/Applications/Stata/StataMP.app/Contents/MacOS/stata-mp *)",
+      "Bash(mv:*)",
+      "Bash(mkdir:*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git pull --ff-only",
+            "statusMessage": "Pulling latest changes from GitHub...",
+            "async": false
+          },
+          {
+            "type": "command",
+            "shell": "bash",
+            "command": "python documents/_read_pdf.py build --quiet || python3 documents/_read_pdf.py build --quiet",
+            "statusMessage": "Checking for new source documents to extract...",
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}

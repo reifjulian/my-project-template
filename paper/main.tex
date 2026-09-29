@@ -1,0 +1,79 @@
+\documentclass[12pt]{article}
+
+% Basic packages
+\usepackage{geometry}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage[small,bf,center]{caption}
+\usepackage{subcaption}
+\usepackage{setspace}
+\usepackage{float}
+\usepackage[autostyle]{csquotes}
+
+% Packages for automated tables
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{standalone}
+\usepackage{pdflscape}
+
+\onehalfspacing
+\textwidth=6.0in
+\textheight=8.5in
+\begin{document}
+
+\title{My Paper}
+\author{Julian Reif\thanks{University of Illinois and NBER.}}
+\maketitle
+
+\begin{abstract}
+\noindent 
+This paper provides an example of a document with tables and figures that were automated using Stata.
+\end{abstract}
+
+\clearpage
+
+\section{Summary}
+
+This example paper includes a table and a figure produced by \texttt{scripts/1\_example.do}, which writes them directly into \texttt{paper/figures/} and \texttt{paper/tables/} so this document compiles after a fresh run of \texttt{run.do}.
+
+I use Stata's \textbf{auto.dta} dataset.%
+%
+\footnote{Type \textbf{sysuse auto, clear} at the Stata prompt to load this dataset.}
+%
+The price distribution, illustrated in Figure \ref{fig:price_histogram}, is skewed right.
+
+I estimate the association between automobile prices and fuel efficiency using the following linear model:
+\begin{align}
+PRICE_i&=\alpha + \beta X_i + \varepsilon \label{eqn:model}
+\end{align}
+The outcome variable, $PRICE_i$, is the price of automobile $i$. The parameter of interest is $\beta$, a vector of coefficients. In my first specification (``spec 1''), the vector $X_i$ includes miles per gallon. The second specification (``spec 2'') also includes the car's weight. I estimate this model using ordinary least squares and report standard errors that are robust to heteroskedasticity.
+
+Table \ref{tab:my_regressions} reports my estimates, separately for domestic and foreign cars. Column (1) reports that an increase in fuel efficiency of 1 mile per gallon is associated with a \$329 reduction in the price of domestic automobiles. Column (2) shows that this association becomes positive and insignificant when I also include weight as a regressor. Columns (3) and (4) show that these associations are similar for foreign automobiles.
+
+\clearpage
+\section{Figures and Tables}
+
+
+%%%
+% Figure: Price histogram
+%%%
+\begin{figure}[ht]
+\caption{Automobile prices}\label{fig:price_histogram}
+\begin{center}
+{\includegraphics[width=1\textwidth]{./figures/price_histogram.png}}
+\parbox{\linewidth}{\footnotesize {Notes: Data were obtained from Stata's built-in auto dataset.}}
+\end{center}
+
+
+\end{figure}
+\clearpage
+
+%%%
+% Tables
+%%%
+
+\input{tables/my_regressions.tex}
+
+\end{document}

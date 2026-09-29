@@ -1,0 +1,63 @@
+# =========================
+# OS, editor, and temp files
+# =========================
+
+.DS_Store
+._*
+*.tmp
+*.lnk
+
+# Microsoft Office / Visio lock, backup, and temp files
+~$*.doc*
+~$*.xls*
+~$*.ppt*
+Backup of *.doc*
+*.xlk
+*.~vsd*
+
+
+# =========================
+# LaTeX build artifacts
+# =========================
+
+*.aux
+*.out
+*.synctex*
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+
+
+# =========================
+# Stata / R / Python / VS Code
+# =========================
+
+~*.do.st*
+/scripts/logs/
+*.log
+__pycache__/
+*.py[cod]
+.venv/
+.Rhistory
+.vscode/
+
+# =========================
+# Project-generated documents and binary docs
+# =========================
+
+/paper/**/*.pdf
+/documents/**/*.pdf
+/documents/**/*.docx
+/documents/extracted/
+
+
+# =========================
+# Claude Code
+# =========================
+
+CLAUDE.local.md
+.claude/*
+!.claude/settings.json
+!.claude/skills/
+!.claude/commands/

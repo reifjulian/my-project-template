@@ -1,0 +1,13 @@
+# Python dependencies for this project.
+# Install into a venv at the repo root:
+#   python -m venv .venv               # python3 on macOS / Linux if needed
+#   .venv\Scripts\Activate.ps1         # Windows PowerShell
+#   .venv\Scripts\activate.bat         # Windows Command Prompt
+#   source .venv/bin/activate          # macOS / Linux
+#   pip install -r pyrequirements.txt
+#
+# Pin versions (package==X.Y.Z) once the project stabilizes.
+
+# Used by: documents/_read_pdf.py
+pymupdf4llm
+markitdown[docx,xlsx]

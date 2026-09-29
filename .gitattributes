@@ -1,0 +1,4 @@
+# Auto-detect text files; normalize line endings to LF on commit AND checkout.
+# This makes the repo behave identically on Windows, macOS, and Linux regardless
+# of any contributor's local `core.autocrlf` setting.
+* text=auto eol=lf
