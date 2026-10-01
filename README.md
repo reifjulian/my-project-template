@@ -4,6 +4,8 @@ A template for building a large, push-button empirical analysis in Stata, R, and
 
 The template also ships with a set of [Claude Code](https://claude.com/claude-code) skills and commands: a coding style guide that is applied automatically when writing Stata, R, or Python code (`.claude/skills/coding/`), plus `/code-audit` and `/review-paper` commands for auditing the analysis and reviewing the paper.
 
+This README assumes you have already installed [Git and GitHub](https://docs.github.com/en/get-started) and an AI coding agent such as [Claude Code](https://claude.com/claude-code). We also recommend [Visual Studio Code](https://code.visualstudio.com/) as your editor, since it integrates well with Git, Stata, R, Python, and Claude Code, though any editor will work.
+
 ## Quickstart
 
 You will need:
@@ -79,6 +81,12 @@ How it works:
 - Nothing is written if the fetch fails. Every file that changed is listed as `[update]`; review those with `git diff` before committing, since local additions to standardized files such as `.claude/settings.json` are overwritten by design.
 
 `python _sync_template.py --help` lists the options, and the script's docstring describes its behavior in full.
+
+## Why Stata?
+
+The project is organized around Stata: `run.do` orchestrates the entire pipeline, calling R and Python scripts as needed. Stata is the natural choice for two reasons. First, it is the tool most economists already use, so a Stata-based master script is immediately readable to co-authors, research assistants, and referees. Second, Stata has excellent reproducibility characteristics, as discussed in the [Stata Coding Guide](https://julianreif.com/guide/). Its `version` command instructs all future releases of Stata to execute code exactly as the specified version did, so results do not drift as the software is upgraded. User-written add-on packages are small, plain-text ado files that are [easily stored locally in the repository](https://julianreif.com/guide/#libraries), so the analysis never depends on the current state of an external package server, requires no internet connection to run, and works well in secure environments such as Research Data Centers (RDCs) that restrict outside access.
+
+That said, nothing here is set in stone. If you prefer to base your analysis solely on Python or R, it is straightforward to ask an AI agent such as Claude Code to reconfigure the repository accordingly, replacing `run.do` with an equivalent master script in your language of choice.
 
 ## Further information
 
