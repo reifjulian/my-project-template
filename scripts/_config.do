@@ -1,7 +1,7 @@
 ************
 * SCRIPT: _config.do
 * PURPOSE: Restrict Stata to the project's local ado libraries, print system info,
-*          create output folders, and define the runtime timer (_print_runtime)
+*          and define project utilities such as the runtime calculator and memory monitor
 ************
 
 * PROJECT_DIR is the project root (this repo), taken from the $MyProject global set in profile.do
@@ -43,16 +43,8 @@ end
 noi `print_timestamp'
 
 ************
-* Additional code you want automatically executed
-************
-* Uncomment to pin the Stata version used for interpreting commands
-*version 19.5
-set varabbrev off
-set more off
-cap mkdir "`PROJECT_DIR'/paper/figures"
-cap mkdir "`PROJECT_DIR'/paper/tables"
-
 * Runtime calculator (time elapsed since first call to _config.do)
+************
 local 0 ", `0'"
 syntax, [timer(name)]
 if mi("${START__TIME__CONFIG`timer'}") global START__TIME__CONFIG`timer' = clock(c(current_date) + " " + c(current_time), "DMY hms")
@@ -69,20 +61,16 @@ program define _print_runtime
 end
 
 ************
-* Memory monitor (optional; nothing runs unless run.do calls _start_memory_monitor)
+* Memory monitor (must be called after `set python_exec`)
 ************
-* _start_memory_monitor samples the memory of this Stata process and all its child processes every `interval' seconds
-*    - writes a CSV trace to `log'
-*    - call it from run.do after `set python_exec`
-* _print_peak_memory reports the peak at the end of the run; its kill option also stops the monitor,
-*    which otherwise keeps sampling until Stata exits
+* Sample the memory of this Stata process and all its child processes every `interval' seconds
 cap program drop _start_memory_monitor
 program define _start_memory_monitor
 	syntax, log(string) [interval(real 10)]
 
 	local pyexec = c(python_exec)
 	if mi("`pyexec'") {
-		di as error "_start_memory_monitor: set python_exec to a venv with psrecord installed before calling"
+		di as error "_start_memory_monitor: set python_exec before calling"
 		exit 198
 	}
 	cap python: import psrecord
@@ -103,12 +91,11 @@ program define _start_memory_monitor
 end
 
 * Report peak memory from the trace written by _start_memory_monitor 
-*  - psrecord flushes after every sample, so the file is readable while the monitor is still running
-*  - psrecord reports MiB; the peak is reported in GiB (1024^3 bytes)
 cap program drop _print_peak_memory
 program define _print_peak_memory
 	syntax, log(string) [kill]
 
+	* psrecord reports MiB; the peak is reported in GiB (1024^3 bytes)
 	tempname mem
 	frame create `mem'
 	frame `mem' {
@@ -134,5 +121,15 @@ program define _print_peak_memory
 		di as text "Memory monitor stopped (" as result "`nkilled'" as text " processes killed)"
 	}
 end
+
+************
+* Additional code you want automatically executed
+************
+* Uncomment to pin the Stata version used for interpreting commands
+*version 19.5
+set varabbrev off
+set more off
+cap mkdir "`PROJECT_DIR'/paper/figures"
+cap mkdir "`PROJECT_DIR'/paper/tables"
 
 ** EOF
