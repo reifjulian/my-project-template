@@ -90,7 +90,7 @@ program define _start_memory_monitor
 	di as text "log: " as result "`log'"
 end
 
-* Report peak memory from the trace written by _start_memory_monitor 
+* Report peak memory (Stata plus child processes) from the trace written by _start_memory_monitor
 cap program drop _print_peak_memory
 program define _print_peak_memory
 	syntax, log(string) [kill]
@@ -103,13 +103,11 @@ program define _print_peak_memory
 		qui sum mem_real, meanonly
 		local peak_gb = r(max) / 1024
 		local samples = r(N)
-		qui sum elapsed_time, meanonly
-		local minutes = r(max) / 60
 	}
 	frame drop `mem'
 
-	di as text "Peak memory (GiB), Stata and child processes: " as result %4.2f `peak_gb'
-	di as text "  (" as result "`samples'" as text " samples over " as result %3.1f `minutes' as text " minutes)"
+	di as text "Peak memory (GiB): " as result %4.2f `peak_gb'
+	di as text "Memory samples:    " as result "`samples'"
 
 	* Stop the monitor by killing every process whose command line names this trace file
 	if !mi("`kill'") {
