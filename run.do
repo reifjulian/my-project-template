@@ -26,11 +26,11 @@ local logfile "`PROJECT_DIR'/scripts/logs/`datetime'.log.txt"
 local memlog  "`PROJECT_DIR'/scripts/logs/`datetime'.mem.csv"
 log using "`logfile'", text
 
-* Configure Stata (local ado path, system info, runtime timer), then R and Python
+* Configure Stata (local ado path, project utilities), then R and Python
 run "`PROJECT_DIR'/scripts/_config.do" timer(run)
 rscript, rversion(4)
-if c(os) == "Windows" set python_exec "`PROJECT_DIR'/.venv/Scripts/python.exe"
-else                  set python_exec "`PROJECT_DIR'/.venv/bin/python"
+local pyexec = cond(c(os) == "Windows", "`PROJECT_DIR'/.venv/Scripts/python.exe", "`PROJECT_DIR'/.venv/bin/python")
+if "`c(python_exec)'" != "`pyexec'" set python_exec "`pyexec'"
 
 * Record the memory usage of Stata and its child processes (requires python, see _config.do and _print_peak_memory below)
 *_start_memory_monitor, log("`memlog'")
