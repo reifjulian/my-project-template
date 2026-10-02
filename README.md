@@ -28,12 +28,18 @@ You will need:
 
 4. **A Python virtual environment** at the repository root (optional unless you use the PDF helper `documents/_read_pdf.py` — the example scripts need only the Python standard library):
 
+   Windows:
+
    ```bash
    python -m venv .venv
-   .venv\Scripts\Activate.ps1      # Windows PowerShell
-   .venv\Scripts\activate.bat      # Windows Command Prompt
-   source .venv/bin/activate       # macOS / Linux
-   pip install -r pyrequirements.txt
+   .venv\Scripts\python.exe -m pip install -r pyrequirements.txt
+   ```
+
+   macOS / Linux:
+
+   ```bash
+   python3 -m venv .venv
+   .venv/bin/python -m pip install -r pyrequirements.txt
    ```
 
    Commands throughout this repository are written for Windows; on macOS/Linux, substitute `python3` for `python` where needed (see *Cross-platform notes* in [CLAUDE.md](CLAUDE.md)).

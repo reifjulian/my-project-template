@@ -78,15 +78,19 @@ This installs the packages listed under *Stata package management* below, includ
 
 This step is optional unless you use the PDF reference helper in `documents/` — the packages in `pyrequirements.txt` exist only for `documents/_read_pdf.py`, and the example pipeline scripts need only the Python standard library. Each clone uses its own venv at the repo root (already gitignored):
 
+Windows:
+
 ```bash
 python -m venv .venv
-.venv\Scripts\Activate.ps1      # Windows PowerShell
-.venv\Scripts\activate.bat      # Windows Command Prompt
-source .venv/bin/activate       # macOS / Linux
-pip install -r pyrequirements.txt
+.venv\Scripts\python.exe -m pip install -r pyrequirements.txt
 ```
 
-If PowerShell refuses to run `Activate.ps1` ("running scripts is disabled on this system"), allow locally-created scripts once with `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`, or skip activation and call the venv directly: `.venv\Scripts\python.exe -m pip install -r pyrequirements.txt`.
+macOS / Linux:
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r pyrequirements.txt
+```
 
 `run.do` points Stata's `python script` command at this venv automatically. To run a Python script from Stata outside `run.do`, set it manually first:
 
@@ -138,7 +142,7 @@ Commands and paths in this repo's docs, slash commands, and coding skill are wri
 | Windows | macOS / Linux |
 |---|---|
 | `python` | `python3` (if `python` is not on the PATH) |
-| `.venv\Scripts\python.exe`; activate with `.venv\Scripts\Activate.ps1` | `.venv/bin/python`; activate with `source .venv/bin/activate` |
+| `.venv\Scripts\python.exe` | `.venv/bin/python` |
 | `rmdir <link>` removes a junction | `rm <link>` removes a symlink (see *Junctions and symlinks*) |
 
 Scripts need no such edits: `run.do` and the Python helpers select the interpreter path for the current OS themselves.
