@@ -11,3 +11,6 @@
 # Used by: documents/_read_pdf.py
 pymupdf4llm
 markitdown[docx,xlsx]
+
+# Used by: scripts/_config.do (_start_memory_monitor, optional memory monitor for run.do)
+psrecord

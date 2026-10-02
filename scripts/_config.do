@@ -68,4 +68,59 @@ program define _print_runtime
 	if !mi("`reset'") macro drop START__TIME__CONFIG`timer'
 end
 
+************
+* Memory monitor (optional; nothing runs unless run.do calls _start_memory_monitor)
+************
+* _start_memory_monitor samples the memory of this Stata process and all its child processes every `interval' seconds
+*    - writes a CSV trace to `log'
+*    - call it from run.do after `set python_exec`
+* _print_peak_memory reports the peak at the end of the run
+cap program drop _start_memory_monitor
+program define _start_memory_monitor
+	syntax, log(string) [interval(real 5)]
+
+	local pyexec = c(python_exec)
+	if mi("`pyexec'") {
+		di as error "_start_memory_monitor: set python_exec to a venv with psrecord installed before calling"
+		exit 198
+	}
+	cap python: import psrecord
+	if _rc {
+		di as error "_start_memory_monitor: psrecord not found in `pyexec' (pip install psrecord)"
+		exit 198
+	}
+
+	python: import os, subprocess
+	python: from sfi import Macro
+	python: cmd = [Macro.getLocal("pyexec"), "-c", "from psrecord.main import main; main()", str(os.getpid()), ///
+		"--include-children", "--interval", Macro.getLocal("interval"), "--log-format", "csv", "--log", Macro.getLocal("log")]
+	python: kw = {"creationflags": subprocess.CREATE_NO_WINDOW | subprocess.CREATE_NEW_PROCESS_GROUP} if os.name == "nt" else {"start_new_session": True}
+	python: subprocess.Popen(cmd, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, close_fds=True, **kw)
+
+	di as text "Memory monitor started (sampling every `interval' seconds): `log'"
+end
+
+* Report peak memory from the trace written by _start_memory_monitor 
+*  - psrecord flushes after every sample, so the file is readable while the monitor is still running
+*  - psrecord reports MiB; the peak is reported in GiB (1024^3 bytes)
+cap program drop _print_peak_memory
+program define _print_peak_memory
+	syntax, log(string)
+
+	tempname mem
+	frame create `mem'
+	frame `mem' {
+		qui import delimited using "`log'", varnames(1) clear
+		qui sum mem_real, meanonly
+		local peak_gb = r(max) / 1024
+		local samples = r(N)
+		qui sum elapsed_time, meanonly
+		local minutes = r(max) / 60
+	}
+	frame drop `mem'
+
+	di as text "Peak memory (GiB), Stata and child processes: " as result %6.2f `peak_gb'
+	di as text "  (`samples' samples over " %6.1f `minutes' " minutes; trace: `log')"
+end
+
 ** EOF
