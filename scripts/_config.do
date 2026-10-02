@@ -26,19 +26,19 @@ mata: mata mlib index
 tempname print_timestamp
 cap program drop `print_timestamp'
 program define `print_timestamp'
-	di "{hline `=min(79, c(linesize))'}"
+	di as text "{hline `=min(79, c(linesize))'}"
 
-	di "Date and time: $S_DATE $S_TIME"
-	di "Stata version: `c(stata_version)'"
-	di "Updated as of: `c(born_date)'"
-	di "Variant:       `=cond( c(MP),"MP",cond(c(SE),"SE",c(flavor)) )'"
-	di "Processors:    `c(processors)'"
-	di "OS:            `c(os)' `c(osdtl)'"
-	di "Machine type:  `c(machine_type)'"
+	di as text "Date and time: " as result "$S_DATE $S_TIME"
+	di as text "Stata version: " as result "`c(stata_version)'"
+	di as text "Updated as of: " as result "`c(born_date)'"
+	di as text "Variant:       " as result "`=cond( c(MP),"MP",cond(c(SE),"SE",c(flavor)) )'"
+	di as text "Processors:    " as result "`c(processors)'"
+	di as text "OS:            " as result "`c(os)' `c(osdtl)'"
+	di as text "Machine type:  " as result "`c(machine_type)'"
 	local hostname : env HOSTNAME
-	if !mi("`hostname'") di "Hostname:      `hostname'"
-	
-	di "{hline `=min(79, c(linesize))'}"
+	if !mi("`hostname'") di as text "Hostname:      " as result "`hostname'"
+
+	di as text "{hline `=min(79, c(linesize))'}"
 end
 noi `print_timestamp'
 
@@ -74,10 +74,11 @@ end
 * _start_memory_monitor samples the memory of this Stata process and all its child processes every `interval' seconds
 *    - writes a CSV trace to `log'
 *    - call it from run.do after `set python_exec`
-* _print_peak_memory reports the peak at the end of the run
+* _print_peak_memory reports the peak at the end of the run; its kill option also stops the monitor,
+*    which otherwise keeps sampling until Stata exits
 cap program drop _start_memory_monitor
 program define _start_memory_monitor
-	syntax, log(string) [interval(real 5)]
+	syntax, log(string) [interval(real 10)]
 
 	local pyexec = c(python_exec)
 	if mi("`pyexec'") {
@@ -95,9 +96,10 @@ program define _start_memory_monitor
 	python: cmd = [Macro.getLocal("pyexec"), "-c", "from psrecord.main import main; main()", str(os.getpid()), ///
 		"--include-children", "--interval", Macro.getLocal("interval"), "--log-format", "csv", "--log", Macro.getLocal("log")]
 	python: kw = {"creationflags": subprocess.CREATE_NO_WINDOW | subprocess.CREATE_NEW_PROCESS_GROUP} if os.name == "nt" else {"start_new_session": True}
-	python: subprocess.Popen(cmd, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, close_fds=True, **kw)
+	python: monitor = subprocess.Popen(cmd, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, close_fds=True, **kw)
 
-	di as text "Memory monitor started (sampling every `interval' seconds): `log'"
+	di as text "Memory monitor started (sampling every " as result "`interval'" as text " seconds)"
+	di as text "log: " as result "`log'"
 end
 
 * Report peak memory from the trace written by _start_memory_monitor 
@@ -105,7 +107,7 @@ end
 *  - psrecord reports MiB; the peak is reported in GiB (1024^3 bytes)
 cap program drop _print_peak_memory
 program define _print_peak_memory
-	syntax, log(string)
+	syntax, log(string) [kill]
 
 	tempname mem
 	frame create `mem'
@@ -119,8 +121,18 @@ program define _print_peak_memory
 	}
 	frame drop `mem'
 
-	di as text "Peak memory (GiB), Stata and child processes: " as result %6.2f `peak_gb'
-	di as text "  (`samples' samples over " %6.1f `minutes' " minutes; trace: `log')"
+	di as text "Peak memory (GiB), Stata and child processes: " as result %4.2f `peak_gb'
+	di as text "  (" as result "`samples'" as text " samples over " as result %3.1f `minutes' as text " minutes)"
+
+	* Stop the monitor by killing every process whose command line names this trace file
+	if !mi("`kill'") {
+		python: import psutil
+		python: from sfi import Macro
+		python: procs = [p for p in psutil.process_iter(["cmdline"]) if p.info["cmdline"] and Macro.getLocal("log") in p.info["cmdline"]]
+		python: killed = [p.kill() for p in procs if p.is_running()]
+		python: Macro.setLocal("nkilled", str(len(procs)))
+		di as text "Memory monitor stopped (" as result "`nkilled'" as text " processes killed)"
+	}
 end
 
 ** EOF

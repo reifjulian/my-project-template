@@ -32,7 +32,7 @@ rscript, rversion(4)
 if c(os) == "Windows" set python_exec "`PROJECT_DIR'/.venv/Scripts/python.exe"
 else                  set python_exec "`PROJECT_DIR'/.venv/bin/python"
 
-* Uncomment to record the memory usage of Stata and its child processes (requires python, see _config.do)
+* Record the memory usage of Stata and its child processes (requires python, see _config.do and _print_peak_memory below)
 *_start_memory_monitor, log("`memlog'")
 
 ************
@@ -49,7 +49,7 @@ python script "`PROJECT_DIR'/scripts/3_example.py"
 
 di "End date and time: $S_DATE $S_TIME"
 cap noi _print_runtime, timer(run)
-*cap noi _print_peak_memory, log("`memlog'")
+*cap noi _print_peak_memory, log("`memlog'") kill
 cap log close
 
 **EOF
