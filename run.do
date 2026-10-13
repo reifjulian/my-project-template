@@ -30,7 +30,7 @@ log using "`logfile'", text
 run "`PROJECT_DIR'/scripts/_config.do" timer(run)
 rscript, rversion(4)
 local pyexec = cond(c(os) == "Windows", "`PROJECT_DIR'/.venv/Scripts/python.exe", "`PROJECT_DIR'/.venv/bin/python")
-if "`c(python_exec)'" != "`pyexec'" set python_exec "`pyexec'"
+if fileexists("`pyexec'") & "`c(python_exec)'" != "`pyexec'" set python_exec "`pyexec'"
 
 * Record the memory usage of Stata and its child processes (requires python, see _config.do and _print_peak_memory below)
 *_start_memory_monitor, log("`memlog'")

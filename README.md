@@ -42,7 +42,7 @@ You will need:
    .venv/bin/python -m pip install -r pyrequirements.txt
    ```
 
-   Avoid the newest Python release: the PDF helper's dependencies often take a few months to support it, and until then pip quietly installs outdated versions. On macOS, also avoid Apple's built-in `python3`, which does not work reliably with Stata. Install Python from Homebrew or [python.org](https://www.python.org/downloads/) and create the venv with that interpreter (e.g., `python3.X -m venv .venv`).
+   Avoid the newest Python release: the PDF helper's dependencies often take a few months to support it, and until then pip quietly installs outdated versions. On macOS, also avoid Apple's built-in `python3`, which does not work reliably with Stata. Install Python from Homebrew or [python.org](https://www.python.org/downloads/) and create the venv with that interpreter (e.g., `python3.X -m venv .venv`). The venv is tied to the Python that created it, so rebuild it if you upgrade or remove that Python (including a Homebrew upgrade or a deleted conda environment).
 
    Commands throughout this repository are written for Windows; on macOS/Linux, substitute `python3` for `python` where needed (see *Cross-platform notes* in [CLAUDE.md](CLAUDE.md)).
 
