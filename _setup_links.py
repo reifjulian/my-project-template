@@ -148,7 +148,12 @@ def git_exclude_path():
 
 
 def ensure_excluded(exclude_file, entries, dry_run):
-    """Append any missing `/relpath/` lines to the git exclude file; never duplicate."""
+    """Append any missing `/relpath` lines to the git exclude file; never duplicate.
+
+    No trailing slash: a trailing slash matches only directories, and git treats a
+    macOS/Linux symlink as a file, so `/data/` would never exclude the `data` link.
+    `/data` matches a junction, a symlink, and a real folder alike.
+    """
     text = exclude_file.read_text(encoding="utf-8", errors="replace") if exclude_file.exists() else ""
     have = {line.strip() for line in text.splitlines()}
     missing = [e for e in entries if e not in have]
@@ -255,7 +260,7 @@ def main():
         report(f"[skip] loose files in storage folder, not linked: {', '.join(loose_files)}")
 
     if linked:
-        entries = [f"/{label}/" for label in linked]
+        entries = [f"/{label}" for label in linked]
         exclude_file = git_exclude_path()
         if exclude_file is None:
             report("[warn] git not found; add these lines to .git/info/exclude yourself: "
