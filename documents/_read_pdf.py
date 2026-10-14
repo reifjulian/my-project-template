@@ -42,9 +42,9 @@ passed explicitly on the command line are taken as given; relative ones
 resolve against the working directory like any other command-line argument.
 
 With no --source-dir, `build` scans the in-repo documents/ folder plus a
-second root: STORAGE_DIR/documents when CLAUDE.local.md at the repo root
-declares STORAGE_DIR and that folder exists, otherwise the documents/sources
-link if present. Files reached through the link are skipped while scanning
+second root: STORAGE_DIR/documents when AGENTS.local.md (or CLAUDE.local.md)
+at the repo root declares STORAGE_DIR and that folder exists, otherwise the
+documents/sources link if present. Files reached through the link are skipped while scanning
 documents/ itself, so each source file is processed once under the same
 relative path either way. The script's own outputs (extracted/, summaries/,
 REFERENCES.md) are always excluded from the scan, both at their configured
@@ -422,15 +422,17 @@ def _resolve_default_sources():
     """Return the list of source folders to scan when --source-dir is omitted.
 
     Always includes the script's own folder (documents/ in the repo). The
-    second root is STORAGE_DIR/documents when CLAUDE.local.md at the repo
-    root declares STORAGE_DIR and that folder exists; otherwise the
-    documents/sources link (created by _setup_links.py) when it is a
-    directory, so a clone without CLAUDE.local.md still finds the files.
+    second root is STORAGE_DIR/documents when AGENTS.local.md (or, failing
+    that, CLAUDE.local.md) at the repo root declares STORAGE_DIR and that
+    folder exists; otherwise the documents/sources link (created by
+    _setup_links.py) when it is a directory, so a clone without a local
+    file still finds the files.
     """
     sources = [HERE]
 
     storage_docs = None
-    local_md = next((f for f in HERE.parent.iterdir() if f.name.lower() == "claude.local.md"), None)
+    local_md = next((f for name in ("agents.local.md", "claude.local.md")
+                     for f in HERE.parent.iterdir() if f.name.lower() == name), None)
     if local_md is not None:
         for line in local_md.read_text(encoding="utf-8-sig", errors="replace").splitlines():
             m = re.match(r"^- STORAGE_DIR:\s*(.+)$", line.strip())
@@ -644,7 +646,7 @@ def main():
         dest="source_dir", default=None,
         help="Folder of raw source files. If omitted, scans the in-repo "
              "documents/ folder plus STORAGE_DIR/documents (when "
-             "CLAUDE.local.md defines STORAGE_DIR and the folder exists), "
+             "AGENTS.local.md defines STORAGE_DIR and the folder exists), "
              "or else the documents/sources link. Passing this flag "
              "overrides the default and uses ONLY the given folder. "
              "(--pdf-dir kept as alias for compat.)"

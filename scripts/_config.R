@@ -1,6 +1,6 @@
 ############
 # SCRIPT: _config.R
-# PURPOSE: Define the project root and read machine-specific paths from CLAUDE.local.md (optional)
+# PURPOSE: Define the project root and read machine-specific paths from AGENTS.local.md (optional)
 ############
 
 # Source this file from an analysis script after defining `.this_dir` (the
@@ -11,13 +11,14 @@
 #                AGENTS.md (case-insensitive). Build all paths from it, e.g.
 #                file.path(MyProject, "data", ...). Renamed per project to
 #                match the Stata global of the same name.
-#   <any key>  - every non-blank `- KEY: value` line in CLAUDE.local.md (e.g.
-#                TMP). Blank keys are skipped, so an unset optional key fails
-#                loudly ("object not found"). STORAGE_DIR is consumed only by
+#   <any key>  - every non-blank `- KEY: value` line in AGENTS.local.md (or
+#                CLAUDE.local.md if AGENTS.local.md is absent), e.g. TMP. Blank
+#                keys are skipped, so an unset optional key fails loudly
+#                ("object not found"). STORAGE_DIR is consumed only by
 #                _setup_links.py (and documents/_read_pdf.py), never by
 #                analysis scripts.
 #
-# If CLAUDE.local.md is missing, only MyProject is defined; no warning.
+# If no local file exists, only MyProject is defined; no warning.
 #
 # Usage in any analysis script in scripts/:
 #     .this_dir <- {
@@ -42,11 +43,12 @@ MyProject <- local({
   d
 })
 
-# Machine-specific keys from CLAUDE.local.md (filename matched case-insensitively)
+# Machine-specific keys from AGENTS.local.md, else CLAUDE.local.md (filenames matched case-insensitively)
 local({
   files <- list.files(MyProject)
-  local_md <- file.path(MyProject, files[tolower(files) == "claude.local.md"])
+  local_md <- file.path(MyProject, files[tolower(files) %in% c("agents.local.md", "claude.local.md")])
   if (!length(local_md)) return(invisible(NULL))
+  local_md <- local_md[order(tolower(basename(local_md)) != "agents.local.md")]
 
   con <- file(local_md[1], encoding = "UTF-8-BOM")
   lines <- readLines(con, warn = FALSE)

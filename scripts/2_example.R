@@ -1,6 +1,6 @@
 ############
 # SCRIPT: 2_example.R
-# PURPOSE: Example R script: prints the project root and the optional TMP key from CLAUDE.local.md
+# PURPOSE: Example R script: prints the project root and the optional TMP key from AGENTS.local.md
 ############
 
 # Preamble (identical across all R scripts)

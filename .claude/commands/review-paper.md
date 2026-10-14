@@ -188,4 +188,4 @@ Issues from Phase 4 plus any from Phases 2/3/5 that have a specific location. Or
 - **Only real problems.** Do not pad the report with things that are already correct.
 - **Prioritize.** If you are running low on context, prioritize the Executive Summary and Substantive Concerns over a long tail of Minor numbered issues. A short report with the right 5 things is more useful than a long report with 50.
 - **Don't second-guess the code from the paper alone.** If a concern depends on what the code actually does (e.g. "is the FE really absorbed?"), say so and recommend `/code-audit`.
-- **Respect project conventions** (see `CLAUDE.md`): significance stars `*` 5% / `**` 1%.
+- **Respect project conventions** (see `AGENTS.md`): significance stars `*` 5% / `**` 1%.

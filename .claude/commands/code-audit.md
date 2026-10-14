@@ -22,17 +22,17 @@ Out of scope:
 
 # Project orientation
 
-Read `CLAUDE.md` first — it contains the authoritative pipeline map, path conventions, and any known discrepancies between the current pipeline and the paper. Key conventions to keep in mind:
+Read `AGENTS.md` first — it contains the authoritative pipeline map, path conventions, and any known discrepancies between the current pipeline and the paper. Key conventions to keep in mind:
 
 - **Pipeline entry point:** `run.do` runs `scripts/_config.do` and then the numbered scripts in order.
-- **Paths:** Stata scripts build every path from the single project global (`$MyProject`, renamed per project; see `CLAUDE.md`). R and Python build from the `MyProject` variable defined by `scripts/_config.R` / `scripts/_config.py`. Nothing is hardcoded.
+- **Paths:** Stata scripts build every path from the single project global (`$MyProject`, renamed per project; see `AGENTS.md`). R and Python build from the `MyProject` variable defined by `scripts/_config.R` / `scripts/_config.py`. Nothing is hardcoded.
 - **Paper:** LaTeX source in `paper/`. Outputs: `paper/tables/*.tex`, `paper/figures/*.png`.
 - **Coding standards** are in `.claude/skills/coding/SKILL.md`. The ones that matter for *error risk*:
   - `merge` / `joinby` must check `_merge` counts (match/master/using) with an `assert`.
   - Significance stars in each table must match the threshold stated in that table's notes.
   - No hardcoded paths (Stata: `$MyProject`; R/Python: `MyProject` from `_config.R` / `_config.py`).
   - Stata LaTeX math in strings: `\(...\)` not `$...$`.
-- **Known issues:** `CLAUDE.md` may document known discrepancies between the current pipeline and the paper results. Do not re-flag these as new findings, but do check for *related* problems the existing notes don't cover.
+- **Known issues:** `AGENTS.md` may document known discrepancies between the current pipeline and the paper results. Do not re-flag these as new findings, but do check for *related* problems the existing notes don't cover.
 
 # How to work
 
@@ -75,7 +75,7 @@ For every table and figure in the paper *that is not a headline result*:
 3. Flag any paper output whose producer you cannot locate.
 4. Check column/row labels in the paper against what the code actually outputs (label mismatch is a method-description issue and is in scope).
 
-Also list scripts present in `scripts/` and confirm the numbered pipeline in `CLAUDE.md` is up to date (new scripts? removed? reordered?).
+Also list scripts present in `scripts/` and confirm the numbered pipeline in `AGENTS.md` is up to date (new scripts? removed? reordered?).
 
 ## Phase 4 — Data construction audit
 
@@ -149,7 +149,7 @@ Use file paths and line numbers. Quote short code snippets when useful. Do not p
 
 - **Read-only.** Do not modify any file. Do not `git` anything.
 - **Do not write to the project's data or output folders.** If you want to re-run a script to verify output, ask first and run it in a scratch directory or with outputs redirected.
-- **Do not re-run heavy scripts.** Spot-check instead and say so in the report. Check `CLAUDE.md` for known runtimes.
+- **Do not re-run heavy scripts.** Spot-check instead and say so in the report. Check `AGENTS.md` for known runtimes.
 - **When paper and code conflict and you cannot tell which is correct**, flag as a question for `/review-paper` rather than picking a side. The code is not automatically right.
-- **Ignore known documented issues** listed in `CLAUDE.md` — do not re-flag as new findings, but do check for *related* problems the existing notes don't cover.
+- **Ignore known documented issues** listed in `AGENTS.md` — do not re-flag as new findings, but do check for *related* problems the existing notes don't cover.
 - **Bug-finding > convention-checking.** If you find yourself producing a long list of minor convention issues and zero bugs, you have not audited enough. Push harder on Phases 2, 4, and 6.
