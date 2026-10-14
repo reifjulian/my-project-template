@@ -1,6 +1,6 @@
 # AGENTS.md
 
-This file provides guidance to Claude Code and other coding agents when working with code in this repository. Machine-specific paths (e.g., the storage folder) live in `AGENTS.local.md` at the repo root, which is gitignored; read it when a task depends on them.
+This file provides guidance to Claude Code and other coding agents when working with code in this repository. Machine-specific paths (e.g., the storage folder) live in the gitignored @AGENTS.local.md at the repo root (if it exists, read it at the start of every session).
 
 ## Project Overview
 
