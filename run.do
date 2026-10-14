@@ -8,7 +8,7 @@
 * Author: Julian Reif
 *******************************************************************************
 
-* PROJECT_DIR is the project root (this repo), taken from the $MyProject global set in profile.do
+* PROJECT_DIR is the project root (this repo), taken from a global set in profile.do
 local PROJECT_DIR "$MyProject"
 
 cap assert !mi("`PROJECT_DIR'")
