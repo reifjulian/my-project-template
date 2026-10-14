@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
 Link each top-level subfolder of the external storage folder (STORAGE_DIR in
-CLAUDE.local.md) into this repo's root, so that Stata, R, Python, and Claude
+AGENTS.local.md) into this repo's root, so that Stata, R, Python, and Claude
 Code see <repo>/data/... etc. as ordinary folders.
 
 Usage (from anywhere; standard library only, Python >= 3.8):
-    python _setup_links.py                       # uses STORAGE_DIR from CLAUDE.local.md
-    python _setup_links.py --storage-dir <path>  # override CLAUDE.local.md
+    python _setup_links.py                       # uses STORAGE_DIR from AGENTS.local.md
+    python _setup_links.py --storage-dir <path>  # override AGENTS.local.md
     python _setup_links.py --dry-run             # print actions, change nothing
 
 Behavior:
@@ -29,7 +29,8 @@ To remove a link: Windows `rmdir <link>` (cmd) -- never `Remove-Item -Recurse`;
 macOS/Linux `rm <link>` (no -r). Removing the link never touches STORAGE_DIR.
 
 This is a one-time setup utility, not a pipeline script: it lives at the repo
-root and reads CLAUDE.local.md itself rather than importing scripts/_config.py.
+root and reads AGENTS.local.md itself rather than importing scripts/_config.py.
+If AGENTS.local.md is absent, CLAUDE.local.md is read instead.
 """
 
 import argparse
@@ -59,12 +60,13 @@ def report(msg, error=False):
 
 
 def find_local_md():
-    """Path of <repo>/CLAUDE.local.md (filename matched case-insensitively), or None."""
-    return next((f for f in REPO.iterdir() if f.name.lower() == "claude.local.md"), None)
+    """Path of <repo>/AGENTS.local.md, else <repo>/CLAUDE.local.md (case-insensitive), or None."""
+    return next((f for name in ("agents.local.md", "claude.local.md")
+                 for f in REPO.iterdir() if f.name.lower() == name), None)
 
 
 def read_local_key(local_md, key):
-    """Value of the `- KEY: value` line in CLAUDE.local.md, or None if absent or blank.
+    """Value of the `- KEY: value` line in the local file, or None if absent or blank.
 
     Exits with status 2 if the file cannot be decoded as UTF-8.
     """
@@ -175,7 +177,7 @@ def main():
     parser = argparse.ArgumentParser(
         description="Link top-level subfolders of the storage folder into the repo root.")
     parser.add_argument("--storage-dir", default=None,
-                        help="Storage folder (overrides STORAGE_DIR in CLAUDE.local.md).")
+                        help="Storage folder (overrides STORAGE_DIR in AGENTS.local.md).")
     parser.add_argument("--dry-run", action="store_true",
                         help="Print planned actions without changing anything.")
     args = parser.parse_args()
@@ -188,8 +190,8 @@ def main():
     if not storage_dir:
         local_md = find_local_md()
         if local_md is None:
-            report(f"Error: no CLAUDE.local.md found in {REPO}. Create it with a "
-                   "\"- STORAGE_DIR: <path>\" line (see CLAUDE.md, setup step 2) "
+            report(f"Error: no AGENTS.local.md found in {REPO}. Create it with a "
+                   "\"- STORAGE_DIR: <path>\" line (see AGENTS.md, setup step 2) "
                    "or pass --storage-dir.", error=True)
             sys.exit(2)
         storage_dir = read_local_key(local_md, "STORAGE_DIR")

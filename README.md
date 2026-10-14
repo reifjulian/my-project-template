@@ -18,7 +18,7 @@ You will need:
    global MyProject "/path/to/this/repository"
    ```
 
-   The global is renamed after your project during first-time setup (see [CLAUDE.md](CLAUDE.md)). If data and output live in an external storage folder, record its path as `STORAGE_DIR` in `CLAUDE.local.md` and run `python _setup_links.py` to link its subfolders into the repository. If you have not set up a Stata profile before, see the [Stata profile section of the guide](https://julianreif.com/guide/#stata-profile).
+   The global is renamed after your project during first-time setup (see [AGENTS.md](AGENTS.md)). If data and output live in an external storage folder, record its path as `STORAGE_DIR` in `AGENTS.local.md` and run `python _setup_links.py` to link its subfolders into the repository. If you have not set up a Stata profile before, see the [Stata profile section of the guide](https://julianreif.com/guide/#stata-profile).
 
 3. **Local Stata packages** installed into the repository. From Stata:
 
@@ -44,17 +44,17 @@ You will need:
 
    Avoid the newest Python release: the PDF helper's dependencies often take a few months to support it, and until then pip quietly installs outdated versions. On macOS, also avoid Apple's built-in `python3`, which does not work reliably with Stata. Install Python from Homebrew or [python.org](https://www.python.org/downloads/) and create the venv with that interpreter (e.g., `python3.X -m venv .venv`). The venv is tied to the Python that created it, so rebuild it if you upgrade or remove that Python (including a Homebrew upgrade or a deleted conda environment).
 
-   Commands throughout this repository are written for Windows; on macOS/Linux, substitute `python3` for `python` where needed (see *Cross-platform notes* in [CLAUDE.md](CLAUDE.md)).
+   Commands throughout this repository are written for Windows; on macOS/Linux, substitute `python3` for `python` where needed (see *Cross-platform notes* in [AGENTS.md](AGENTS.md)).
 
 Once you are set up, running `run.do` executes a sample analysis from beginning to end, writing its tables and figures into `paper/`. The paper, `paper/main.tex`, can then be compiled using standard LaTeX tools.
 
-Full first-time setup instructions — including renaming the project from its `MyProject` placeholder — are in [CLAUDE.md](CLAUDE.md).
+Full first-time setup instructions — including renaming the project from its `MyProject` placeholder — are in [AGENTS.md](AGENTS.md).
 
 **Prefer to skip the manual steps?** If you use [Claude Code](https://claude.com/claude-code), it can perform this entire setup for you — just open a session in the repository and ask it to walk you through first-time setup.
 
-## Machine-specific paths (`CLAUDE.local.md`)
+## Machine-specific paths (`AGENTS.local.md`)
 
-Paths that differ across machines never go in scripts. They go in `CLAUDE.local.md` at the repository root, one `- KEY: value` line per path. The file is gitignored, so each clone keeps its own copy: create it by hand, or let Claude Code create it during first-time setup. A typical file:
+Paths that differ across machines never go in scripts. They go in `AGENTS.local.md` at the repository root, one `- KEY: value` line per path. The file is gitignored, so each clone keeps its own copy: create it by hand, or let Claude Code create it during first-time setup. A typical file:
 
 ```markdown
 # Local machine paths
@@ -63,7 +63,7 @@ Paths that differ across machines never go in scripts. They go in `CLAUDE.local.
 - TMP: D:/tmp
 ```
 
-- `STORAGE_DIR` is the external storage folder (data, results, reference documents). It is read only by `_setup_links.py`, which links the folder's subfolders into the repository (see [CLAUDE.md](CLAUDE.md), setup step 2). Leave it out if everything lives in the repository.
+- `STORAGE_DIR` is the external storage folder (data, results, reference documents). It is read only by `_setup_links.py`, which links the folder's subfolders into the repository (see [AGENTS.md](AGENTS.md), setup step 2). Leave it out if everything lives in the repository.
 - Any other key is yours to define. `scripts/_config.py` and `scripts/_config.R` turn every non-blank line into a variable of the same name, so `TMP` above becomes `TMP` in Python and R with no script edits; on the Stata side define the same key as a global in `profile.do`. Blank keys are skipped, so referencing an unset key fails loudly rather than silently pointing somewhere wrong.
 - To see this in action, set `TMP` and run `scripts/2_example.R` or `scripts/3_example.py`: both print the project root and `TMP` (or `(not set)`).
 
@@ -81,7 +81,7 @@ git diff                              # review before committing
 
 How it works:
 
-- The `FILES` list at the top of the script names the files that are standardized across projects: the Claude Code skill, commands, and `settings.json`; `.editorconfig` and `.gitattributes`; `AGENTS.md`; `_setup_links.py` and `_sync_template.py` itself; the `documents/` helpers; and `scripts/_config.do`, `_config.py`, and `_config.R`. Project-specific files such as `CLAUDE.md`, `README.md`, `run.do`, and `.gitignore` are listed but commented out. Edit the list to suit a project.
+- The `FILES` list at the top of the script names the files that are standardized across projects: the Claude Code skill, commands, and `settings.json`; `.editorconfig` and `.gitattributes`; `_setup_links.py` and `_sync_template.py` itself; the `documents/` helpers; and `scripts/_config.do`, `_config.py`, and `_config.R`. Project-specific files such as `AGENTS.md`, `README.md`, `run.do`, and `.gitignore` are listed but commented out. Edit the list to suit a project.
 - It fetches the template's `main` branch from GitHub with your normal git credentials into a throwaway temporary folder, so the project's own `.git` is never touched. `--ref <branch|tag|sha>` selects a different version.
 - A file in `FILES` that does not exist in the project is skipped, never created: if you deleted it, the project did not need it.
 - The template's `MyProject` placeholder in the three `_config.*` scripts is replaced with the project's name, which the script reads from the project's `scripts/_config.do`. Pass `--project <Name>` to override.
@@ -98,8 +98,8 @@ That said, nothing here is set in stone. If you prefer to base your analysis sol
 
 ## Further information
 
-Detailed documentation of the repository structure, coding conventions, pipeline (`run.do`), package management, reference database, and optional Overleaf sync lives in [CLAUDE.md](CLAUDE.md). That file is written for Claude Code, but it doubles as the project manual — and the easiest way to learn how anything works is to open Claude Code in the repository and ask.
+Detailed documentation of the repository structure, coding conventions, pipeline (`run.do`), package management, reference database, and optional Overleaf sync lives in [AGENTS.md](AGENTS.md). That file is written for Claude Code and other coding agents, but it doubles as the project manual — and the easiest way to learn how anything works is to open Claude Code in the repository and ask.
 
 ### Trimming the template
 
-The template supports Stata, R, and Python, but nothing requires all three. If you don't plan to use R or Python, simply delete the corresponding example scripts and config files (e.g., `scripts/2_example.R` and `scripts/_config.R`, or `scripts/3_example.py`, `scripts/_config.py`, and `pyrequirements.txt`) and remove the related setup steps from `CLAUDE.md`. The Stata pipeline runs independently of both. As with setup, the easiest route is to ask Claude Code to trim the template for you.
+The template supports Stata, R, and Python, but nothing requires all three. If you don't plan to use R or Python, simply delete the corresponding example scripts and config files (e.g., `scripts/2_example.R` and `scripts/_config.R`, or `scripts/3_example.py`, `scripts/_config.py`, and `pyrequirements.txt`) and remove the related setup steps from `AGENTS.md`. The Stata pipeline runs independently of both. As with setup, the easiest route is to ask Claude Code to trim the template for you.

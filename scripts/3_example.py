@@ -1,6 +1,6 @@
 ############
 # SCRIPT: 3_example.py
-# PURPOSE: Example Python script: prints the project root and the optional TMP key from CLAUDE.local.md
+# PURPOSE: Example Python script: prints the project root and the optional TMP key from AGENTS.local.md
 ############
 
 # Preamble (identical across all Python scripts)

@@ -9,7 +9,7 @@ This skill defines how to write and edit code in this project. Follow these conv
 
 ## Override hierarchy
 
-`CLAUDE.md` in the project root takes precedence over this skill. If `CLAUDE.md` says something different, follow `CLAUDE.md`. Beyond that, this skill is authoritative.
+`AGENTS.md` in the project root takes precedence over this skill. If `AGENTS.md` says something different, follow `AGENTS.md`. Beyond that, this skill is authoritative.
 
 ---
 
@@ -19,13 +19,13 @@ This skill defines how to write and edit code in this project. Follow these conv
 Code and scripts should run on Windows, macOS, and Linux without modification.
 - Use forward slashes in all paths (`results/figures/`, not `results\figures\`).
 - Avoid bash-only constructs (`&&`, `||`, `2>/dev/null`, backticks) in scripts and hooks that are shared across machines. If shell behavior must differ per OS, show both variants or move the logic into a Python/Stata script.
-- Write commands for Windows by default (`python`, not `python3`); macOS/Linux substitutions are listed once under *Cross-platform notes* in `CLAUDE.md`.
+- Write commands for Windows by default (`python`, not `python3`); macOS/Linux substitutions are listed once under *Cross-platform notes* in `AGENTS.md`.
 - Don't rely on case-insensitive filesystems. File and folder names are lowercase with underscores or hyphens.
 
 ### File paths
 - **Never hard-code paths.** In Stata, all paths reference a global macro. In Python, paths are built from `MyProject`, defined by `scripts/_config.py`; see §8. In R, `MyProject` comes from `scripts/_config.R`; see §7.
-- The single project global `$MyProject` is the project root (this git repo). It is defined in the user's Stata `profile.do` (renamed per project) before `run.do` executes; never redefine it inside scripts. Python and R derive `MyProject` themselves (§7, §8). Write `$MyProject/data/...`, `$MyProject/results/...`, etc.; `data/`, `processed/`, and `results/` may be links into an external storage folder (§2), which scripts never address directly. `STORAGE_DIR` in `CLAUDE.local.md` is read only by `_setup_links.py`, never by scripts.
-- Any other machine-specific path (e.g. a scratch folder on a separate drive for very large intermediates) is a `- KEY: value` line in `CLAUDE.local.md`; `_config.py` and `_config.R` expose each non-blank key as a variable of the same name, and the Stata side defines the same key as a `profile.do` global. All three must agree. See `README.md` for an example.
+- The single project global `$MyProject` is the project root (this git repo). It is defined in the user's Stata `profile.do` (renamed per project) before `run.do` executes; never redefine it inside scripts. Python and R derive `MyProject` themselves (§7, §8). Write `$MyProject/data/...`, `$MyProject/results/...`, etc.; `data/`, `processed/`, and `results/` may be links into an external storage folder (§2), which scripts never address directly. `STORAGE_DIR` in `AGENTS.local.md` is read only by `_setup_links.py`, never by scripts.
+- Any other machine-specific path (e.g. a scratch folder on a separate drive for very large intermediates) is a `- KEY: value` line in `AGENTS.local.md`; `_config.py` and `_config.R` expose each non-blank key as a variable of the same name, and the Stata side defines the same key as a `profile.do` global. All three must agree. See `README.md` for an example.
 
 ### `_config.do`, `_config.py`, and `_config.R`
 Every Stata script begins with a preamble call to the config script:
@@ -39,7 +39,7 @@ The Stata config script:
 - Creates `paper/figures/` and `paper/tables/` with `cap mkdir` (`run.do` creates `scripts/logs/`)
 - Starts the runtime timer and defines `_print_runtime`, which the script footer calls (§3)
 
-`scripts/_config.py` (Python, see §8) and `scripts/_config.R` (R, see §7) are the analogs for the other two languages. All three `_config` files share the same vocabulary (`MyProject`, plus any keys in `CLAUDE.local.md`). The Python and R sides locate the project root by walking up from their own folder to the first directory containing `CLAUDE.md` or `AGENTS.md` (case-insensitive) and read `CLAUDE.local.md` there (at import and source time, respectively); the Stata side bootstraps from the `profile.do` global (since Stata can't self-locate from a script path).
+`scripts/_config.py` (Python, see §8) and `scripts/_config.R` (R, see §7) are the analogs for the other two languages. All three `_config` files share the same vocabulary (`MyProject`, plus any keys in `AGENTS.local.md`). The Python and R sides locate the project root by walking up from their own folder to the first directory containing `CLAUDE.md` or `AGENTS.md` (case-insensitive) and read `AGENTS.local.md` (or, failing that, `CLAUDE.local.md`) there (at import and source time, respectively); the Stata side bootstraps from the `profile.do` global (since Stata can't self-locate from a script path).
 
 ### Stata command reference
 When uncertain about a user-written Stata command's syntax or options (e.g., `regsave`, `texsave`, `dobatch`, `ingap`, `sortobs`), read the package's `.sthlp` help file in `scripts/libraries/stata/<package>/`. The `.ado` source file in the same folder is the ultimate authority on behavior. Do this before guessing — add-on commands change over time and training data may lag.
@@ -55,7 +55,7 @@ run.do                          # Master script
 _setup_links.py                 # Links storage-folder subfolders into the repo (once per clone)
 scripts/
   _config.do                    # Stata setup (run before any other script)
-  _config.py, _config.R         # Python / R analogs: define MyProject, read CLAUDE.local.md
+  _config.py, _config.R         # Python / R analogs: define MyProject, read AGENTS.local.md
   _install_stata_packages.do    # Install user-written packages locally
   1_*.do, 2_*.R, 3_*.py, ...    # Numbered analysis scripts (execution order)
   libraries/stata/              # Local copies of user-written Stata packages
@@ -458,7 +458,7 @@ rscript, rversion(4.2.2) require(sf rmapshaper scales RColorBrewer)
 * Call an R script
 rscript using "$MyProject/scripts/5_iv_make_maps.R"
 ```
-`scripts/_config.R` — the R analog of `_config.do` / `_config.py` — defines `MyProject` (the project root) and reads `CLAUDE.local.md`, so the same script runs identically under `rscript` and standalone (`Rscript scripts/foo.R`). No `args(...)` or env-var fallback is needed.
+`scripts/_config.R` — the R analog of `_config.do` / `_config.py` — defines `MyProject` (the project root) and reads `AGENTS.local.md`, so the same script runs identically under `rscript` and standalone (`Rscript scripts/foo.R`). No `args(...)` or env-var fallback is needed.
 
 ### R script conventions
 - Import Stata `.dta` files via `haven::read_dta()`.
@@ -486,7 +486,7 @@ source(file.path(.this_dir, "_config.R"))
 ```
 Notes on the preamble:
 - The `.this_dir` block locates the script directory under both `Rscript` (which sets `--file=`) and `source()` (which sets `sys.frame(1)$ofile`), so the same preamble works in both modes.
-- Sourcing `_config.R` does the work at source time: starting from `.this_dir`, it walks up to the first folder containing `CLAUDE.md` or `AGENTS.md` (case-insensitive) and assigns that path to `MyProject`, then reads `CLAUDE.local.md` from there (if present) and assigns every non-blank `- KEY: value` line as a global. Keys with blank values are skipped, so referencing an unset optional key fails loudly; guard with `exists()` if a script must handle its absence. This mirrors Python's `from _config import *`, which configures at import time. `_config.R` errors if sourced before `.this_dir` is defined.
+- Sourcing `_config.R` does the work at source time: starting from `.this_dir`, it walks up to the first folder containing `CLAUDE.md` or `AGENTS.md` (case-insensitive) and assigns that path to `MyProject`, then reads `AGENTS.local.md` from there (if present) and assigns every non-blank `- KEY: value` line as a global. Keys with blank values are skipped, so referencing an unset optional key fails loudly; guard with `exists()` if a script must handle its absence. This mirrors Python's `from _config import *`, which configures at import time. `_config.R` errors if sourced before `.this_dir` is defined.
 - Build paths from `MyProject`: `file.path(MyProject, "data", ...)`. `STORAGE_DIR` is never read by scripts.
 
 ### Footer block
@@ -505,7 +505,7 @@ cat(sprintf("Runtime (hours): %6.2f\n",
 
 ## 8. Calling Python
 
-Python scripts are called from Stata using the built-in `python script` command. Unlike `rscript`, `python script` does not accept positional arguments. `scripts/_config.py` — the Python analog of `_config.do` — defines `MyProject` (the project root) and reads `CLAUDE.local.md`, so the same script runs identically under `python script` and standalone (`python scripts/foo.py`), with no env-var fallback or `sfi` lookups needed.
+Python scripts are called from Stata using the built-in `python script` command. Unlike `rscript`, `python script` does not accept positional arguments. `scripts/_config.py` — the Python analog of `_config.do` — defines `MyProject` (the project root) and reads `AGENTS.local.md`, so the same script runs identically under `python script` and standalone (`python scripts/foo.py`), with no env-var fallback or `sfi` lookups needed.
 
 ### Python script conventions
 - Python scripts run in the repo venv (`.venv/`; packages listed in `pyrequirements.txt`). `run.do` points Stata at it with `set python_exec`; when running a script from Stata outside `run.do`, set it manually first (never with `permanently`).
@@ -543,7 +543,7 @@ import requests  # noqa: E402
 # ... rest of script body ...
 ```
 Notes on the preamble:
-- `_config.py` walks up from its own folder to the first directory containing `CLAUDE.md` or `AGENTS.md` (case-insensitive), assigns that path to `MyProject`, then reads `CLAUDE.local.md` from there (if present) and assigns every non-blank `- KEY: value` line into its module namespace. The wildcard `from _config import *` pulls them all in — so adding a new key to `CLAUDE.local.md` makes it available everywhere with no script edits. Keys with blank values are skipped, so referencing an unset optional key fails loudly with a `NameError`; guard with `globals().get("KEY")` if a script must handle its absence. Build paths from `MyProject` (`MyProject + "/data/..."`); `STORAGE_DIR` is never read by scripts.
+- `_config.py` walks up from its own folder to the first directory containing `CLAUDE.md` or `AGENTS.md` (case-insensitive), assigns that path to `MyProject`, then reads `AGENTS.local.md` from there (if present) and assigns every non-blank `- KEY: value` line into its module namespace. The wildcard `from _config import *` pulls them all in — so adding a new key to `AGENTS.local.md` makes it available everywhere with no script edits. Keys with blank values are skipped, so referencing an unset optional key fails loudly with a `NameError`; guard with `globals().get("KEY")` if a script must handle its absence. Build paths from `MyProject` (`MyProject + "/data/..."`); `STORAGE_DIR` is never read by scripts.
 - The `__file__` or `sys.argv[0]` dance is required because Stata's `python script ...` runs the top-level script in a namespace where `__file__` is undefined; `sys.argv[0]` carries the path in both modes. Imported modules — including `_config.py` itself — always get `__file__`, so the helper uses it directly without the dance.
 - The `# noqa: E402,F403` suppresses linter warnings for "import after code" (E402, caused by `sys.path.insert` above) and "wildcard import" (F403, by design).
 - Move script-specific imports below the `Code begins` banner with `# noqa: E402` on each. `sys`, `time`, and `Path` are the only imports allowed above it.

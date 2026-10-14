@@ -1,6 +1,6 @@
 ############
 # SCRIPT: _config.py
-# PURPOSE: Define the project root and read machine-specific paths from CLAUDE.local.md (optional)
+# PURPOSE: Define the project root and read machine-specific paths from AGENTS.local.md (optional)
 ############
 
 """
@@ -11,13 +11,13 @@ After `from _config import *` you get:
                AGENTS.md (case-insensitive). Build all paths from it, e.g.
                MyProject + "/data/...". Renamed per project to match the
                Stata global of the same name.
-  <any key>  - every non-blank `- KEY: value` line in CLAUDE.local.md (e.g.
-               TMP). Blank keys are skipped, so an unset optional key fails
-               loudly with a NameError. STORAGE_DIR is consumed only by
-               _setup_links.py (and documents/_read_pdf.py), never by
-               analysis scripts.
+  <any key>  - every non-blank `- KEY: value` line in AGENTS.local.md (or
+               CLAUDE.local.md if AGENTS.local.md is absent), e.g. TMP. Blank
+               keys are skipped, so an unset optional key fails loudly with a
+               NameError. STORAGE_DIR is consumed only by _setup_links.py
+               (and documents/_read_pdf.py), never by analysis scripts.
 
-If CLAUDE.local.md is missing, only MyProject is defined; no warning.
+If no local file exists, only MyProject is defined; no warning.
 
 This module is always *imported*, never run as a top-level script, so
 __file__ is always defined here (Stata's `python script` omits it for the
@@ -53,8 +53,9 @@ if _root is None:
 MyProject = str(_root)
 __all__ = ["MyProject"]
 
-# Machine-specific keys from CLAUDE.local.md (filename matched case-insensitively)
-_local_md = next((f for f in _root.iterdir() if f.name.lower() == "claude.local.md"), None)
+# Machine-specific keys from AGENTS.local.md, else CLAUDE.local.md (filenames matched case-insensitively)
+_local_md = next((f for name in ("agents.local.md", "claude.local.md")
+                  for f in _root.iterdir() if f.name.lower() == name), None)
 if _local_md is not None:
     for _line in _local_md.read_text(encoding="utf-8-sig").splitlines():
         _m = re.match(r"^- ([A-Za-z_][A-Za-z0-9_]*):(.*)$", _line)

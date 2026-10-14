@@ -21,7 +21,7 @@ Behavior:
     not need it. This script never creates files, only overwrites existing ones.
   - A file in FILES that is missing from the template at --ref is skipped too.
   - Files in RENAME (the config scripts) contain the template's `MyProject`
-    placeholder, which each project renames (CLAUDE.md, setup step 1). The
+    placeholder, which each project renames (AGENTS.md, setup step 1). The
     placeholder is replaced with this project's name, read from the local
     scripts/_config.do (or run.do), or given with --project. If the local copy
     still uses `MyProject`, nothing is renamed.
@@ -64,7 +64,6 @@ FILES = [
     ".claude/skills/coding/SKILL.md",
     ".editorconfig",
     ".gitattributes",
-    "AGENTS.md",
     "_setup_links.py",
     "_sync_template.py",
     "documents/_read_pdf.py",
@@ -73,13 +72,13 @@ FILES = [
     "scripts/_config.py",
     "scripts/_config.R",
     # Project-specific downstream; enable deliberately and review with git diff:
-    # ".gitignore", "CLAUDE.md", "README.md", "run.do",
+    # ".gitignore", "AGENTS.md", "README.md", "run.do",
     # "scripts/_install_stata_packages.do", "pyrequirements.txt", "paper/main.tex",
     # "scripts/1_example.do", "scripts/2_example.R", "scripts/3_example.py",
 ]
 
 # Subset of FILES in which the template's `MyProject` placeholder is replaced by
-# this project's name. Never add CLAUDE.md, SKILL.md, or this script: their
+# this project's name. Never add AGENTS.md, SKILL.md, or this script: their
 # MyProject text is meant to stay generic.
 RENAME = {"scripts/_config.do", "scripts/_config.py", "scripts/_config.R"}
 PLACEHOLDER = re.compile(rb"\bMyProject\b")
