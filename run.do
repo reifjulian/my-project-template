@@ -33,7 +33,7 @@ local pyexec = cond(c(os) == "Windows", "`PROJECT_DIR'/.venv/Scripts/python.exe"
 if fileexists("`pyexec'") & "`c(python_exec)'" != "`pyexec'" set python_exec "`pyexec'"
 
 * Record the memory usage of Stata and its child processes (requires python, see _config.do and _print_peak_memory below)
-*_start_memory_monitor, log("`memlog'")
+cap noi _start_memory_monitor, log("`memlog'")
 
 ************
 * Run project analysis
@@ -49,7 +49,7 @@ python script "`PROJECT_DIR'/scripts/3_example.py"
 
 di "End date and time: $S_DATE $S_TIME"
 cap noi _print_runtime, timer(run)
-*cap noi _print_peak_memory, log("`memlog'") kill
+cap noi _print_peak_memory, log("`memlog'") kill
 cap log close
 
 **EOF

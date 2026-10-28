@@ -55,7 +55,7 @@ program define _print_runtime
 	
 	local now = clock(c(current_date) + " " + c(current_time), "DMY hms")
 	local runtime = (`now' - ${START__TIME__CONFIG`timer'}) / 1000 / 3600
-	cap noi display as text "Runtime (hours): " as result %6.2f `runtime'
+	di as text "Runtime (hours): " as result %6.2f `runtime'
 	
 	if !mi("`reset'") macro drop START__TIME__CONFIG`timer'
 end
@@ -94,6 +94,11 @@ end
 cap program drop _print_peak_memory
 program define _print_peak_memory
 	syntax, log(string) [kill]
+
+	if !fileexists("`log'") {
+		di as error "_print_peak_memory: memory log not found (did _start_memory_monitor fail?): `log'"
+		exit 601
+	}
 
 	* psrecord reports MiB; the peak is reported in GiB (1024^3 bytes)
 	tempname mem
