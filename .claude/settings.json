@@ -3,6 +3,11 @@
     "CLAUDE_CODE_USE_POWERSHELL_TOOL": "1",
     "GIT_TERMINAL_PROMPT": "0"
   },
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
   "permissions": {
     "allow": [
       "Bash(pip install:*)",
