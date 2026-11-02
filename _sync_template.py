@@ -4,7 +4,7 @@ Pull the shared template files listed in FILES below from the project template
 on GitHub and overwrite this repo's copies with them.
 
 Copy this script into a project repo that was created from the template and run
-it whenever the template's shared tooling (Claude skills and commands, config
+it whenever the template's shared tooling (agent skills, commands, hooks, config
 scripts, helper scripts) has improved.
 
 Usage (from anywhere; standard library only, Python >= 3.8; needs git):
@@ -58,10 +58,13 @@ SELF = "_sync_template.py"
 
 # Repo-relative paths (forward slashes) that are standardized across projects.
 FILES = [
+    ".agents/skills/code-audit/SKILL.md",
+    ".agents/skills/review-paper/SKILL.md",
     ".claude/commands/code-audit.md",
     ".claude/commands/review-paper.md",
     ".claude/settings.json",
     ".claude/skills/coding/SKILL.md",
+    ".codex/hooks.json",
     ".editorconfig",
     ".gitattributes",
     "_setup_links.py",

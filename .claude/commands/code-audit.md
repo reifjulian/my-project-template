@@ -14,7 +14,7 @@ Out of scope:
 - Do NOT flag mismatches between numbers in paper prose and numbers in tables/figures — that is `/review-paper`'s job.
 - Do NOT critique whether the paper's *stated* spec is the right design — also `/review-paper`'s job. This command checks that code matches the paper, not that the paper is correct.
 - Do NOT rewrite or refactor for style. Flag issues; do not fix unless explicitly asked.
-- Do NOT modify files. This is read-only.
+- Do NOT modify existing project files. Creating the final audit report described below is permitted.
 
 # Inputs
 
@@ -147,7 +147,7 @@ Use file paths and line numbers. Quote short code snippets when useful. Do not p
 
 # Ground rules
 
-- **Read-only.** Do not modify any file. Do not `git` anything.
+- **Read-only except for the final report.** Do not modify existing project files; creating the final audit report described above is permitted. Do not `git` anything.
 - **Do not write to the project's data or output folders.** If you want to re-run a script to verify output, ask first and run it in a scratch directory or with outputs redirected.
 - **Do not re-run heavy scripts.** Spot-check instead and say so in the report. Check `AGENTS.md` for known runtimes.
 - **When paper and code conflict and you cannot tell which is correct**, flag as a question for `/review-paper` rather than picking a side. The code is not automatically right.

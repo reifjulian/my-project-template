@@ -59,10 +59,10 @@ The link script creates one link per top-level subfolder of the storage folder, 
 
 Scripts never read `STORAGE_DIR`; they address everything through `$MyProject` (`MyProject` in Python and R). `AGENTS.local.md` can also hold other machine-specific keys: `scripts/_config.py` and `scripts/_config.R` turn every non-blank `- KEY: value` line into a variable, e.g. a `TMP` scratch folder on a separate drive.
 
-**On session start, Claude Code checks the storage-folder line at the top of this file:**
+**On session start, the coding agent checks the storage-folder line at the top of this file:**
 
-- **`no`**: nothing to check. `AGENTS.local.md` is optional and Claude never prompts for it.
-- **`yes`**: `AGENTS.local.md` must exist in the repo root with a non-blank `STORAGE_DIR`. If the file is missing or the key is blank (e.g., a fresh clone on a new machine), Claude always asks the user for the storage folder path and writes the file in the format above before doing anything else. Then Claude runs `python _setup_links.py --dry-run` and, if any links would be created, offers to run it for real.
+- **`no`**: nothing to check. `AGENTS.local.md` is optional and the agent never prompts for it.
+- **`yes`**: `AGENTS.local.md` must exist in the repo root with a non-blank `STORAGE_DIR`. If the file is missing or the key is blank (e.g., a fresh clone on a new machine), the agent always asks the user for the storage folder path and writes the file in the format above before doing anything else. Then the agent runs `python _setup_links.py --dry-run` and, if any links would be created, offers to run it for real.
 
 ### 3. Install Stata packages
 
@@ -129,10 +129,15 @@ documents/                      # Reference papers and summaries (optional)
 data/                           # Link to STORAGE_DIR/data (not in git)
 processed/                      # Link to STORAGE_DIR/processed (not in git)
 results/                        # Link to STORAGE_DIR/results (not in git)
+.agents/skills/
+  code-audit/SKILL.md            # Codex wrapper for the code-audit command
+  review-paper/SKILL.md          # Codex wrapper for the review-paper command
 .claude/
   skills/coding/SKILL.md        # Authoritative coding style guide
   commands/                     # Project-specific slash commands
   settings.json                 # Permission / hook configuration
+.codex/
+  hooks.json                    # Codex startup hooks (review and trust via /hooks)
 ```
 
 ## Cross-platform notes
@@ -149,11 +154,11 @@ Scripts need no such edits: `run.do` and the Python helpers select the interpret
 
 ## Coding conventions
 
-The `.claude/skills/coding/SKILL.md` file is the authoritative style guide. Claude Code loads it automatically whenever you write or edit a `.do`, `.py`, or `.R` file; other agents should read it in full before writing or editing code. If anything in this `AGENTS.md` conflicts with the skill, `AGENTS.md` wins.
+The `.claude/skills/coding/SKILL.md` file is the authoritative style guide. Coding agents should read it in full before writing or editing a `.do`, `.py`, or `.R` file. If anything in this `AGENTS.md` conflicts with the skill, `AGENTS.md` wins.
 
 ## Slash commands
 
-Project-specific slash commands live in `.claude/commands/`. Agents other than Claude Code should read and follow the matching file when the user asks for one of these:
+Project-specific slash commands live in `.claude/commands/`. Coding agents should read and follow the matching file when the user asks for one of these. Codex wrappers in `.agents/skills/` expose them as `$code-audit` and `$review-paper`:
 
 - `/code-audit` — Read-only code audit; find bugs and verify code matches paper methods.
 - `/review-paper` — Referee-style audit of the paper for numerical consistency, citations, econometrics, and writing.
@@ -193,7 +198,7 @@ If `documents/` is populated, project references are organized as:
 - `documents/extracted/` — Full markdown extractions of the source files (gitignored)
 - `documents/sources/` — Raw PDFs and other source files (link to `STORAGE_DIR/documents/`, not in git). A project without a storage folder can put PDFs directly in `documents/`; they are gitignored there too.
 
-When looking up a reference paper, read `REFERENCES.md` first to identify relevant papers, then read the summary in `summaries/`. Only fall back to `extracted/` when you need specific details (exact quotes, table values, model specifications). If a paper is not in `REFERENCES.md`, check `extracted/` — if it appears there but has no summary, tell the user and suggest they ask Claude to summarize the missing papers.
+When looking up a reference paper, read `REFERENCES.md` first to identify relevant papers, then read the summary in `summaries/`. Only fall back to `extracted/` when you need specific details (exact quotes, table values, model specifications). If a paper is not in `REFERENCES.md`, check `extracted/` — if it appears there but has no summary, tell the user and suggest they ask a coding agent to summarize the missing papers.
 
 To read or extract PDFs, use the helper script (see its `--help` for the full set of subcommands):
 

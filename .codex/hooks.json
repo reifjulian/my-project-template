@@ -1,0 +1,23 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git pull --ff-only",
+            "statusMessage": "Pulling latest changes from GitHub...",
+            "async": false
+          },
+          {
+            "type": "command",
+            "command": "python documents/_read_pdf.py build --quiet || python3 documents/_read_pdf.py build --quiet",
+            "commandWindows": "cmd /d /c \"python documents/_read_pdf.py build --quiet || python3 documents/_read_pdf.py build --quiet\"",
+            "statusMessage": "Checking for new source documents to extract...",
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}
