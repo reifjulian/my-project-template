@@ -46,7 +46,7 @@ The audit is paper-driven. Read `paper/main.tex` (or the compiled PDF via `pytho
 2. **Every empirical specification** the paper describes (equation number if labeled).
 3. **Every sample restriction** mentioned in the text.
 4. **Every constructed variable** the paper describes (definition, transformation, units).
-5. **Every table and figure**, with a one-line description of what it reports.
+5. **Every table and figure**, with a one-line description of what it reports and every method claim made in its notes: how each displayed element (estimates, intervals, means, plotted points, fitted lines) was computed.
 6. **Every robustness check** described.
 
 This inventory drives every subsequent phase.
@@ -74,6 +74,7 @@ For every table and figure in the paper *that is not a headline result*:
 2. Confirm the file modification time is consistent with the producing script (stale outputs are a real failure mode).
 3. Flag any paper output whose producer you cannot locate.
 4. Check column/row labels in the paper against what the code actually outputs (label mismatch is a method-description issue and is in scope).
+5. Verify each method claim in the notes against the code that computes that element. Every element of a figure (points, fitted lines, bands) is a result: find the lines that compute it and confirm the estimator, sample, weights, and bandwidth are what the notes say. A fitted line or overlaid estimate that the notes attribute to an equation, or that sits beside a table estimate, must come from that same estimation, not from a separate fit to the plotted points. If the notes do not say how an element was computed, flag it as a method/description mismatch.
 
 Also list scripts present in `scripts/` and confirm the numbered pipeline in `AGENTS.md` is up to date (new scripts? removed? reordered?).
 
@@ -104,6 +105,7 @@ For each estimation in the paper, check that the code implements what the paper 
 - **IV** (if any): first-stage / reduced-form / 2SLS use the same sample.
 - **ML** (if any): train/test split, seed, hyperparameter search space, CV folds, metric used for selection, feature set.
 - **Standard errors**: construction (clustered, HC1/HC3, bootstrap reps, etc.) matches the table notes.
+- **Check at the call, not at the construction.** A weight, cluster variable, control, or sample flag counts as applied only if it appears in the estimation command that produces the reported number. One that is built, or passed to a wrapper program, but never reaches the estimator is a bug.
 
 ## Phase 6 — General bug hunt
 
