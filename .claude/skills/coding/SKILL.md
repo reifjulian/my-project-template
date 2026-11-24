@@ -155,6 +155,10 @@ cap noi _print_runtime, reset
 - Use `***` or `***...***` separator lines between major sections.
 - Comment blocks use `***********` or `*****...` asterisk borders.
 - Keep comments concise; use `label variable` with units for variable documentation.
+- The next three rules apply to Stata, R, and Python alike. They do not affect the structural comments the script templates require (header blocks, section separators, `END`/`EOF` markers).
+- Add or edit a comment only when a reader could not get the point from the code itself (a non-obvious reason, a data quirk, a deliberate departure from the obvious approach). Do not restate what a command does, and do not narrate the edit ("now uses X", "fixed merge").
+- When making a small change, leave existing comments alone if they are still true; fix or delete any the change makes false.
+- Put counts or shares in a comment only next to an `assert` that checks them; unchecked numbers go stale silently.
 - Document the unit of observation in the script header or in inline footnotes.
 
 ### Variable naming
@@ -589,5 +593,5 @@ Where a published benchmark exists, compare your aggregate output against it. Th
 - Sample size vs. administrative records or prior literature
 - Aggregate deaths vs. CDC vital statistics totals
 
-The comparison does not need to be exact — the goal is to catch order-of-magnitude discrepancies. Document the benchmark and result in a code comment so future runs can confirm the output is stable.
+The comparison does not need to be exact — the goal is to catch order-of-magnitude discrepancies. Record the benchmark and its source in a code comment, and `assert` that the output falls within a loose tolerance of it (e.g., within 10%) so future runs confirm the output is stable.
 
