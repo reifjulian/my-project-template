@@ -18,7 +18,7 @@ Out of scope:
 
 # Inputs
 
-- `$ARGUMENTS` — optional scope (a method name, script number, table number, or file path). If empty, audit the full pipeline.
+- `$ARGUMENTS` — optional scope (a method name, script number, table number, or file path). If empty, audit the full pipeline. A scope limits which scripts are read in full, not which are searched: trace the scoped scripts' variables upstream to the scripts that build their inputs and downstream to every script that loads their output.
 
 # Project orientation
 
@@ -88,6 +88,7 @@ Flag:
 - **Silent sample drops** (`drop if` without an `assert` / count check). These are the single biggest source of unnoticed errors.
 - **Off-by-one errors** in dates, ages, cohorts, event time.
 - **Joins (`merge` / `joinby`) without `_merge` assertions** — could silently duplicate or drop observations. Verify observation counts before/after match what the paper claims about sample size.
+- **Transformations applied twice.** For each transformation (winsorizing or trimming, sentinel stripping, zero-filling, deflating, rescaling, logging, sample filters), search all of `scripts/` for the same operation, following file loads and variable renames to see whether it runs on data an earlier script already transformed. Unless the code says the repeat is intended, the second pass is itself the finding, not an extra step or uneven variable coverage: a bug if it changes values (re-winsorizing, re-deflating, re-logging), a minor issue if it is merely redundant (re-stripping sentinels, re-applying a fixed filter). Code described as mirroring older or replaced code is the likeliest place to find one.
 - **Inconsistent variable definitions** across scripts.
 - **Reused variable names** with different content across scripts.
 - **Hardcoded values** that should be parameters (cutoff thresholds, bandwidths, dates).
@@ -143,7 +144,7 @@ For each: paper quote (with section), code location, the discrepancy. If you can
 
 ## 5. Minor issues and suspicions — things that look off but may be fine; flag for triage.
 
-## 6. Unverifiable items — anything you could not check and why (missing data, missing script, unclear paper description, heavy script not re-run).
+## 6. Unverifiable items — anything you could not check and why (missing data, missing script, unclear paper description, heavy script not re-run). For a scoped audit, also list the scripts not opened.
 
 Use file paths and line numbers. Quote short code snippets when useful. Do not propose fixes unless asked.
 
